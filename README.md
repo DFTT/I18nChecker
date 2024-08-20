@@ -1,0 +1,2 @@
+# I18nChecker
+提取代码中国际化字符串，根据excel配置表自动更新项目中的strings文件
