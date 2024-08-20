@@ -1,8 +1,17 @@
 # I18nChecker
 
+
+```
 Commands:
-    + init - 生成'I18nConfig.json'配置文件到当前文件夹
-    + update - 根据配置文件信息, 扫描当前文件夹中.m和.swift文件, 提取"xx".i18n后缀的硬编码, 和excel中配置校对, 最终生成新的strings文件覆盖到指定目录
+    + init - 生成'I18nConfig.json'配置文件到当前文件夹<br>
+    + update - 根据配置文件信息, 扫描当前文件夹中.m和.swift文件,
+             | 提取"xx".i18n后缀的硬编码, 和excel中配置校对, 最终生成新的strings文件覆盖到指定目录
+             |  Options:
+             |  --keyMode [default: excel] - excel: 取excel中全部的key生成strings文件 
+                                           - code: 仅取代码中提取的key生成strings文件
+```
+
+-------------------------------------------  
 
 #### 注意: 目前只提取如下格式硬编码
 ```
