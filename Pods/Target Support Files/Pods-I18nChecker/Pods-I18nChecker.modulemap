@@ -1,0 +1,6 @@
+module Pods_I18nChecker {
+  umbrella header "Pods-I18nChecker-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "RegexKitLite",
+  "version": "4.0.0",
+  "summary": "Add Pod support for RegexKitLite",
+  "description": "Add Pod support for RegexKitLite https://regexkit.sourceforge.net/",
+  "homepage": "https://github.com/dadadong/RegexKitLite",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "DDD": "dadadong@163.com"
+  },
+  "source": {
+    "git": "https://github.com/dadadong/RegexKitLite.git",
+    "branch": "main"
+  },
+  "platforms": {
+    "ios": "10.0",
+    "osx": "11"
+  },
+  "source_files": "RegexKitLite/Classes/**/*",
+  "requires_arc": false,
+  "libraries": "icucore"
+}

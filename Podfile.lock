@@ -1,0 +1,37 @@
+PODS:
+  - CoreXLSX (0.14.1):
+    - XMLCoder (~> 0.11.1)
+    - ZIPFoundation (~> 0.9.11)
+  - RegexKitLite (4.0.0)
+  - XMLCoder (0.11.1)
+  - ZIPFoundation (0.9.19)
+
+DEPENDENCIES:
+  - CoreXLSX
+  - RegexKitLite (from `https://github.com/dadadong/RegexKitLite.git`, branch `main`)
+
+SPEC REPOS:
+  trunk:
+    - CoreXLSX
+    - XMLCoder
+    - ZIPFoundation
+
+EXTERNAL SOURCES:
+  RegexKitLite:
+    :branch: main
+    :git: https://github.com/dadadong/RegexKitLite.git
+
+CHECKOUT OPTIONS:
+  RegexKitLite:
+    :commit: b54204e36118f38fc73d4d215c855ac5b6abaf99
+    :git: https://github.com/dadadong/RegexKitLite.git
+
+SPEC CHECKSUMS:
+  CoreXLSX: f9a7a70b509150ceb675b05877b7ac041a587030
+  RegexKitLite: 42f37faf73848ee36051d6ca2aedbe8e06f191fe
+  XMLCoder: c4638336674de7ba279cd23f2005817d69f538e0
+  ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
+
+PODFILE CHECKSUM: 7ccad60839faf9eb6cfdf6cc4a99d15ea148a4b8
+
+COCOAPODS: 1.15.2
