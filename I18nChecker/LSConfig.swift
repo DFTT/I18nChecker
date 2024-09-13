@@ -29,6 +29,8 @@ struct LSConfig {
     let xlsxFilePath: String
     /// 文档中的目标sheet名字
     let xlsxSheetName: String
+    /// 文档单元格的内容包裹字符, 用来解决内容两端包含空格的场景,
+    let xlsxCellWrapSymbol: String
 
     //
     static func parseFrom(path: URL) throws -> LSConfig {
@@ -48,17 +50,28 @@ struct LSConfig {
 
         let xlsxFilePath: String = try __stringFrom(info, key: "xlsxFilePath")
         let xlsxSheetName: String = try __stringFrom(info, key: "xlsxSheetName")
+        let xlsxCellWrapSymbol: String = try __stringFrom(info, key: "xlsxCellWrapSymbol", allowEmpty: true)
 
-        return .init(rootDirectoryPath: rootDirectoryPath, excludeDirectoryNames: excludeDirectoryNames,
-                     stringsFileName: stringsFileName, lprojParentDirPath: lprojParentDirPath,
-                     xlsxFilePath: xlsxFilePath, xlsxSheetName: xlsxSheetName)
+        return .init(rootDirectoryPath: rootDirectoryPath,
+                     excludeDirectoryNames: excludeDirectoryNames,
+                     stringsFileName: stringsFileName,
+                     lprojParentDirPath: lprojParentDirPath,
+                     xlsxFilePath: xlsxFilePath,
+                     xlsxSheetName: xlsxSheetName,
+                     xlsxCellWrapSymbol: xlsxCellWrapSymbol.count == 1 ? xlsxCellWrapSymbol : "")
 
-        func __stringFrom(_ info: [String: Any], key: String) throws -> String {
+        func __stringFrom(_ info: [String: Any], key: String, allowEmpty: Bool = false) throws -> String {
             let value: String? = (info[key] as? [String: Any])?["value"] as? String
-            if value == nil || value!.isEmpty {
-                throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "\(key) 不能为空"])
+            if allowEmpty == false {
+                if value == nil {
+                    throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "配置项缺失: \(key), 可运行 init 重新生成配置文件"])
+                }
+                if value!.isEmpty {
+                    throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "配置 \(key) 不可为空"])
+                }
             }
-            return value!
+
+            return value ?? ""
         }
 
         func __stringArrayFrom(_ info: [String: Any], key: String) throws -> [String] {
@@ -117,6 +130,11 @@ struct LSConfig {
 
                 "xlsxSheetName" : {
                     "notes" : "***文档中的目标sheet名字, 一般第一个sheet的默认名字是Sheet1***",
+                    "value" : ""
+                },
+
+                "xlsxCellWrapSymbol" : {
+                    "notes" : "***文档单元格的内容包裹字符, 用来解决内容两端包含空格的场景, 比如 ' key ' -> '$ key $', 只需要在此项配置 "$", 工具在读取单元格内容时, 会判断首尾是否是此字符, 并自动删除后匹配.  注意: 仅支持配置一个字符, 如果原内容首尾需要此字符, 请写两次避免被删除",
                     "value" : ""
                 }
             }

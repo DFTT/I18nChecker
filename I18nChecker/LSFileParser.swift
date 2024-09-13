@@ -114,7 +114,7 @@ class LSFileParser {
             }
 
             // 取列
-            for hCell in headCells {
+            for (idx, hCell) in headCells.enumerated() {
                 guard let cell = ___seamColumnCell(in: row, with: hCell.cell) else {
                     printColoredLog("value Cell not found at (\(row.reference):\(hCell.cell.reference.column))", color: .red)
                     continue
@@ -128,7 +128,7 @@ class LSFileParser {
                 // 存储
                 let language = resMap[hCell] ?? LanguageItem(header: hCell)
                 /// 判断下key重复
-                if language.kvs[ketStr] != nil {
+                if idx == 0, language.kvs[ketStr] != nil {
                     printColoredLog("Duplicate key is \(ketStr)", color: .yellow)
                     repeatKeyCout += 1
                 }
@@ -226,6 +226,13 @@ class LSFileParser {
                 }
                 text = text.replacingOccurrences(of: "\n", with: "\\n")
             }
+        }
+        //
+        if text.hasPrefix(ctx.xlsxCellWrapSymbol) {
+            text.removeFirst()
+        }
+        if text.hasSuffix(ctx.xlsxCellWrapSymbol) {
+            text.removeLast()
         }
         return text
     }
