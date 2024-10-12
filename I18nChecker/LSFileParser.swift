@@ -228,11 +228,13 @@ class LSFileParser {
             }
         }
         //
-        if text.hasPrefix(ctx.xlsxCellWrapSymbol) {
-            text.removeFirst()
-        }
-        if text.hasSuffix(ctx.xlsxCellWrapSymbol) {
-            text.removeLast()
+        if ctx.xlsxCellWrapSymbol.isEmpty == false {
+            if text.hasPrefix(ctx.xlsxCellWrapSymbol) {
+                text.removeFirst()
+            }
+            if text.hasSuffix(ctx.xlsxCellWrapSymbol) {
+                text.removeLast()
+            }
         }
         return text
     }
