@@ -8,15 +8,17 @@
 import Commander
 import Foundation
 
-//#if DEBUG
-//let curDirURL = URL(filePath: "/Users/dadadongl/Desktop/works/TaTaPlanet")
-//cmdInit(curDirURL)
-//let kfm = KeyFromMode(rawValue: "code")!
-//cmdUpdate(curDirURL, keyMode: kfm)
-//#else
+#if DEBUG
+let curDirURL = URL(filePath: "/Users/dadadongl/Desktop/works/TaTaPlanet")
+//let curDirURL = URL(filePath: "/Users/dadadongl/Desktop/works/kokone")
+
+cmdInit(curDirURL)
+let kfm = KeyFromMode(rawValue: "code")!
+cmdUpdate(curDirURL, keyMode: kfm)
+#else
 // 获取当前运行目录
 let curDirURL = URL(filePath: FileManager.default.currentDirectoryPath)
-//#endif
+#endif
 
 Group
 { group in
@@ -30,7 +32,7 @@ Group
                   Option<String>("keyFrom",
                                  default: "excel",
                                  description: """
-                                 excel: 取excel中全部的key生成strings文件
+                                 excel: 取excel中全部的key生成strings文件\n
                                  code: 仅取代码中提取的key生成strings文件
                                  """,
                                  validator: { sp in

@@ -97,9 +97,14 @@ func cmdUpdate(_ dir: URL, keyMode: KeyFromMode) {
     
     // 检查文档中是否缺失key
     var hitCount = 0
-    for key in allkeysFromCode {
+    for key in allkeysFromCode.sorted() {
         if allKeysFromExcel.contains(key) == false {
-            printColoredLog("缺失: \"\(key)\"", color: .red)
+            if key.hasPrefix(" ") || key.hasSuffix(" ") {
+                printColoredLog("缺失: \"#\(key)#\"", color: .red)
+            } else {
+                printColoredLog("缺失: \"\(key)\"", color: .red)
+            }
+            
             hitCount += 1
         }
     }
@@ -117,5 +122,40 @@ func cmdUpdate(_ dir: URL, keyMode: KeyFromMode) {
             return allkeysFromCode.contains(key)
         }
     }
-    printColoredLog("结束啦~~ 👏🏻👏🏻👏🏻", color: .green)
+    printColoredLog("结束啦~~ 👏🏻👏🏻👏🏻\n\n", color: .green)
+    
+    // 询问是否需要打印出来 excel中已经多余的key
+
+    print("-------------------可选操作-------------------")
+    var print = false
+    while true {
+        printColoredLog("是否需要打印出来Excel中已废弃的key(excel中有,代码中没有), 如不需处理, 请输入\"n\", 以\"回车键\"继续:", color: .green)
+#if DEBUG
+        print = true
+        break
+#endif
+        let input = getchar()
+        if input == 110 {
+            // Enter key(10) , Space key(32)
+            print = true
+        }
+        break
+    }
+    if print {
+        var hitCount = 0
+        for key in allKeysFromExcel.sorted() {
+            if allkeysFromCode.contains(key) == false {
+                if key.hasPrefix(" ") || key.hasSuffix(" ") {
+                    printColoredLog("冗余: \"#\(key)#\"", color: .red)
+                } else {
+                    printColoredLog("冗余: \"\(key)\"", color: .red)
+                }
+                hitCount += 1
+            }
+        }
+        if hitCount > 0 {
+            printColoredLog("\n: 检测到以上\(hitCount)个冗余翻译", color: .red)
+        }
+    }
+    printColoredLog("这次真的结束啦~~ 👏🏻👏🏻👏🏻\n\n", color: .green)
 }

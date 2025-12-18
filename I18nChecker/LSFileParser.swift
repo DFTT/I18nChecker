@@ -15,6 +15,8 @@ enum KeyFromMode: String {
     case code
 }
 
+private let _reg = try? NSRegularExpression(pattern: #"(?<!\\)""#)
+
 class LSFileParser {
     private let xFile: XLSXFile
     private let sheetNamePathMap: [(name: String?, path: String)]
@@ -119,7 +121,7 @@ class LSFileParser {
                     printColoredLog("value Cell not found at (\(row.reference):\(hCell.cell.reference.column))", color: .red)
                     continue
                 }
-                let valueStr = ___textFor(cell: cell, trimming: true)
+                let valueStr = ___textFor(cell: cell, trimming: true, isValue: true)
                 guard valueStr.isEmpty == false else {
                     printColoredLog("value Cell content empty at (\(row.reference):\(hCell.cell.reference.column))", color: .red)
                     continue
@@ -209,7 +211,7 @@ class LSFileParser {
         }
     }
 
-    func ___textFor(cell: Cell?, trimming: Bool) -> String {
+    func ___textFor(cell: Cell?, trimming: Bool, isValue: Bool = false) -> String {
         guard let cell = cell else { return "" }
         var text = cell.stringValue(allStrings) ?? ""
         if trimming {
@@ -236,6 +238,20 @@ class LSFileParser {
                 text.removeLast()
             }
         }
+
+        // 对于value, 如果"没有转义, 则自动加上转义
+        if isValue {
+            let nsText = NSMutableString(string: text as String)
+            let matchRanges = _reg!.matches(in: text, range: NSRange(location: 0, length: nsText.length))
+            for range in matchRanges.reversed() {
+                if range.range.length == 1 {
+                    nsText.insert(#"\"#, at: range.range.location)
+                }
+            }
+
+            return nsText as String
+        }
+
         return text
     }
 

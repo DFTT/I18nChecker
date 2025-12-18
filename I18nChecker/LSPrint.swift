@@ -8,6 +8,7 @@
 import Foundation
 
 enum LogColor: String {
+    case none
     case red = "\u{001B}[31m"
     case green = "\u{001B}[32m"
     case yellow = "\u{001B}[33m"
@@ -16,5 +17,9 @@ enum LogColor: String {
 }
 
 func printColoredLog(_ message: String, color: LogColor) {
-    print("\(color.rawValue)\(message)\(LogColor.reset.rawValue)")
+    if case .none = color {
+        print("\(message)")
+    } else {
+        print("\(color.rawValue)\(message)\(LogColor.reset.rawValue)")
+    }
 }
