@@ -17,6 +17,18 @@ enum KeyFromMode: String {
 
 private let _reg = try? NSRegularExpression(pattern: #"(?<!\\)""#)
 
+// 占位符: iOS 的 %@ %d %ld %s %f 等(含位置参数/长度修饰符), 以及自定义 {xxx}
+private let _placeholderReg = try! NSRegularExpression(
+    pattern: #"%(?:\d+\$)?[+\-#0]*\d*(?:\.\d+)?(?:hh|h|ll|l|q|z|t|j|L)?[@diouxXeEfgGaAcsp%]|\{[^}]*\}"#
+)
+
+private func ___placeholders(in text: String) -> [String] {
+    let ns = text as NSString
+    return _placeholderReg
+        .matches(in: text, range: NSRange(location: 0, length: ns.length))
+        .map { ns.substring(with: $0.range) }
+}
+
 class LSFileParser {
     private let xFile: XLSXFile
     private let sheetNamePathMap: [(name: String?, path: String)]
@@ -182,10 +194,39 @@ class LSFileParser {
         let fileManager = FileManager.default
 
         for language in languages {
-            // 排序 拼接
-            var contentString = language.kvs.values
+            // 排序
+            let items = language.kvs.values
                 .filter { filter($0.key) }
                 .sorted { $0.key < $1.key }
+
+            // 校验占位符:
+            //   硬编码占位符(%@ %d %02d %2f 等)必须以相同数量和顺序出现;
+            //   自定义占位符({xx})顺序可不一致, 但 key 中定义的必须都在 value 中存在.
+            for item in items {
+                let keyPHs = ___placeholders(in: item.key)
+                guard keyPHs.isEmpty == false else { continue }
+                let valuePHs = ___placeholders(in: item.value)
+
+                let keyHard = keyPHs.filter { $0.hasPrefix("%") }
+                let valueHard = valuePHs.filter { $0.hasPrefix("%") }
+                let keyCustom = Set(keyPHs.filter { $0.hasPrefix("{") })
+                let valueCustom = Set(valuePHs.filter { $0.hasPrefix("{") })
+
+                if keyHard != valueHard || keyCustom.isSubset(of: valueCustom) == false {
+                    printColoredLog("""
+                                    占位符不匹配 (语言: \(language.header.code))
+                                        key:   \(item.key)
+                                        value: \(item.value)
+                                        key 占位符:   \(keyPHs)
+                                        value 占位符: \(valuePHs)
+                                    """,
+                                    color: .red)
+                    exit(1)
+                }
+            }
+
+            // 拼接
+            var contentString = items
                 .map { "\"\($0.key)\" = \"\($0.value)\";" }
                 .joined(separator: "\n")
             contentString.append("\n")
